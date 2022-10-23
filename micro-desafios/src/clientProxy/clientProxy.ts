@@ -13,16 +13,4 @@ export class ClientProxyApplication{
         
       })
 }
-
-getClientProxyChallenge(): ClientProxy{
-  return  this.clientAdminBackend = ClientProxyFactory.create({
-      transport: Transport.RMQ,
-      options:{
-        urls:[process.env.URI],
-        queue:'micro-challenge'
-      },
-      
-    })
-}
-
 }

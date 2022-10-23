@@ -18,8 +18,8 @@ export class JogadoresService{
         return this.clientRpcAdmin.emit('criar-jogador',criarJogador)
     }
 
-    async list(_id:string){
-        return await this.clientRpcAdmin.send('consultar-jogadores', _id?_id:'')
+    async list(email:string){
+        return await this.clientRpcAdmin.send('consultar-jogadores', email?email:'')
     }
 
     async update(_id:string,data:CriarJogadorDto){

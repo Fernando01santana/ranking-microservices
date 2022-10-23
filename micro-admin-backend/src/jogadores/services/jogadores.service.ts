@@ -55,9 +55,11 @@ export class JogadoresService {
     }
 
     public async findAll(data:any):Promise<IJogador[]>{
+        console.log('CHEGOU NO OUTRO MS');
+        
         try {            
             
-            if (data) {
+            if (data && data._id) {
                 let jogador = await this.findById(data)
                 return [jogador]
             }
@@ -91,11 +93,17 @@ export class JogadoresService {
 
     public async findById(id:string):Promise<IJogador>{
         try {
-            const jogador = await this.jogadorModule.findById({_id:id})
-            if (!jogador) {
+            let gaming;
+            const allGamings = await this.jogadorModule.find().populate([{ path: 'categoria', strictPopulate: false }]).exec()
+            for (let index = 0; index < allGamings.length; index++) {
+                const element = allGamings[index];
+                gaming.push(element)
+            }
+
+            if (gaming.length == 0) {
                 throw new RpcException("Nenhum jogador encontrado com o id informado")
             }
-            return jogador;
+            return gaming;
         } catch (error) {
             console.log(error);
             throw new RpcException(`Erro ao procurar jogador ${error}`)

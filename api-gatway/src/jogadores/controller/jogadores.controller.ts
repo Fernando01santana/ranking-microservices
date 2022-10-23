@@ -20,8 +20,8 @@ export class JogadoresController {
   }
 
   @Get('jogadores/list')
-  async getAllCategorias(@Query() _id:any){
-    return await this.jogadoresService.list(_id)
+  async getAllCategorias(@Query() email:any){
+    return await this.jogadoresService.list(email)
   }
 
   @Put('jogadores/update')
