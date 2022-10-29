@@ -22,7 +22,6 @@ export class ChallengeService {
     private logger = new Logger(ChallengeService.name)
 
     async criarDesafio(createChallengeDto: CriarDesafioDto): Promise<Desafio> {
-
         const gaming = await this.clientRpcAdmin.send('consultar-jogadores','').toPromise()
         
         const idsGaming = gaming.map(gamingId => gamingId._id)

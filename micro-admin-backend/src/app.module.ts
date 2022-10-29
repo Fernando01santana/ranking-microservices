@@ -10,7 +10,7 @@ config()
 @Module({
   imports: [
     MongooseModule.forRoot(
-      `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@cluster0.bysac1u.mongodb.net/?retryWrites=true&w=majority`,
+      'mongodb://docker:mongopw@localhost:55000',
     ),
     MongooseModule.forFeature([
       {name:'categoria', schema:CategoriaSchema},
