@@ -55,8 +55,6 @@ export class JogadoresService {
     }
 
     public async findAll(data:any):Promise<IJogador[]>{
-        console.log('CHEGOU NO OUTRO MS');
-        
         try {            
             
             if (data && data._id) {

@@ -28,7 +28,7 @@ export class ChallengeController {
       console.log(error);
       
       this.logger.error(error.message)
-      // this.keyDuplicateException.verify(error,channel,message)
+      this.keyDuplicateException.verify(error,channel,message)
     }
 
   }

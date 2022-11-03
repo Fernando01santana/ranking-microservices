@@ -9,7 +9,7 @@ config()
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb://docker:mongopw@localhost:55000',
+      process.env.URI_MONGO,
     ),
     ChallengeModule,
     ConfigModule.forRoot({isGlobal:true})
