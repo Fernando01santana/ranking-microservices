@@ -25,8 +25,6 @@ export class ChallengeController {
       await channel.ack(message)
       return createChallenge
     } catch (error) {
-      console.log(error);
-      
       this.logger.error(error.message)
       this.keyDuplicateException.verify(error,channel,message)
     }

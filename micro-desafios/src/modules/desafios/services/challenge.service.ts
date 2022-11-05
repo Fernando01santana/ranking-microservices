@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException, BadRequestException, Logger, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Desafio, Partida } from '../interface/desafio.interface';
+import { Desafio } from '../interface/desafio.interface';
 import { Model } from 'mongoose';
 import { CriarDesafioDto } from '../dtos/criar-desafio.dto';
 import {IJogador} from '../interface/jogador.interface'
 import { DesafioStatus } from '../interface/desafio.status';
-import { ClientProxyApplication } from 'src/clientProxy/clientProxy';
+import { ClientProxyApplication } from 'src/modules/clientProxy/clientProxy';
 import { AtribuirDesafioPartidaDto } from '../dtos/atribuir-desafio-partida.dto';
 import { AtualizarDesafioDto } from '../dtos/atualizar-desafio.dto';
 
@@ -16,8 +16,6 @@ export class ChallengeService {
     constructor(
         @InjectModel('desafio') 
         private readonly challengeModel: Model<Desafio>,
-        @InjectModel('partida') 
-        private readonly partidaModel: Model<Partida>,
         private clientRpc:ClientProxyApplication
 
     ){}
@@ -136,13 +134,15 @@ export class ChallengeService {
            throw new BadRequestException(`O jogador vencedor não faz parte do desafio!`)
        }
 
-       //cria a partida
-       const partidaCriada = new this.partidaModel(atribuirDesafioPartidaDto)
+       //cria a partida = atraves da fila
+       const rpcConnection =  this.clientRpc.getClientProxyDesafiosInstance()
+       const createPartida = await rpcConnection.emit('create-partida',atribuirDesafioPartidaDto).toPromise()
+
        //atribui a partida a mesma categoria do desafio encontrado, faz o mesmo para os jogadores
-       partidaCriada.categoria = desafioEncontrado.categoria
-       partidaCriada.jogadores = desafioEncontrado.jogadores
+       createPartida.categoria = desafioEncontrado.categoria
+       createPartida.jogadores = desafioEncontrado.jogadores
        //salva a partida
-       const resultado = await partidaCriada.save()
+       const resultado = await createPartida.save()
        //muda o status do desafio para REALIZADO
        desafioEncontrado.status = DesafioStatus.REALIZADO
        //altera o id da partida no objeto desafio
@@ -151,7 +151,7 @@ export class ChallengeService {
         try {
         await this.challengeModel.findOneAndUpdate({_id},{$set: desafioEncontrado}).exec() 
         } catch (error) {
-           await this.partidaModel.deleteOne({_id: resultado._id}).exec();
+           await rpcConnection.emit('delete-partida',_id)
            throw new InternalServerErrorException()
         }
     }
